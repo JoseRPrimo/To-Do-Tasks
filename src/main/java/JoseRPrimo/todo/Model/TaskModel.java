@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 
@@ -17,9 +18,13 @@ public class TaskModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "titulo")
     private String titulo;
+    @Column(name="descricao")
     private String descricao;
+    @Column(name="concluida")
     private Boolean concluida;
-    private LocalDate dataCriacao;
+    @Column(name = "criacao")
+    private LocalDate dataCriacao = LocalDate.now();
 
 }
