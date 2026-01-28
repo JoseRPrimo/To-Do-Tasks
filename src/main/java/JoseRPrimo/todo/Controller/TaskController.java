@@ -2,11 +2,16 @@ package JoseRPrimo.todo.Controller;
 
 import JoseRPrimo.todo.DTO.TaskRequestDTO;
 import JoseRPrimo.todo.DTO.TaskResponseDTO;
+import JoseRPrimo.todo.Exception.ResourceNotFoundException;
 import JoseRPrimo.todo.Model.TaskModel;
 import JoseRPrimo.todo.Service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +34,9 @@ public class TaskController {
     }
 
     @PostMapping("/criar")
-    public TaskResponseDTO criarTask(@RequestBody TaskRequestDTO task){
-        return taskService.criar(task);
+    public ResponseEntity<TaskResponseDTO> criarTask(@Valid @RequestBody TaskRequestDTO task){
+        TaskResponseDTO taskNova = taskService.criar(task);
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskNova);
     }
 
     @PutMapping("/atualizar/{id}")
@@ -39,7 +45,8 @@ public class TaskController {
     }
 
     @DeleteMapping("/deletar/{id}")
-    public void deletarTask(@PathVariable Long id){
+    public ResponseEntity<Void> deletarTask(@PathVariable Long id){
         taskService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }
