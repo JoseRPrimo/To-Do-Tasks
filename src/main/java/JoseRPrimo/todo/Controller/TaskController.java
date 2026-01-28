@@ -9,4 +9,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class TaskController {
 
+    public void listarTask(){
+
+    }
+
+    public void listarTaskId(){
+
+    }
+
+    public void criarTask(){
+
+    }
+
+    public void atualizarTask(){
+
+    }
+
+    public void deletarTask(){
+
+    }
 }
