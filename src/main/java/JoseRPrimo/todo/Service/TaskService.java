@@ -3,6 +3,7 @@ package JoseRPrimo.todo.Service;
 import JoseRPrimo.todo.DTO.TaskMapper;
 import JoseRPrimo.todo.DTO.TaskRequestDTO;
 import JoseRPrimo.todo.DTO.TaskResponseDTO;
+import JoseRPrimo.todo.Exception.ResourceNotFoundException;
 import JoseRPrimo.todo.Model.TaskModel;
 import JoseRPrimo.todo.Repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class TaskService {
     public Optional<Object> listarPorId(Long id){
         Optional<TaskModel> task = taskRepository.findById(id);
         if (task.isEmpty()){
-            return Optional.empty();
+            throw new ResourceNotFoundException("Task nao encontrada");
         }
         return Optional.of(mapper.toResponse(task.get()));
 
@@ -43,13 +44,13 @@ public class TaskService {
 
     public void deletar(Long id){
         if(!taskRepository.existsById(id)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ninja nao existe");
+            throw new ResourceNotFoundException("Task nao encontrada");
         }
         taskRepository.deleteById(id);
     }
 
     public TaskResponseDTO atualizar(Long id, TaskRequestDTO taskRequestDTO){
-        TaskModel task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task nao encontrada"));
+        TaskModel task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada"));
         task.setTitulo(taskRequestDTO.getTitulo());
         task.setDescricao(taskRequestDTO.getDescricao());
         task.setConcluida(taskRequestDTO.getConcluida());
