@@ -27,16 +27,13 @@ public class TaskService {
         return taskRepository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
     }
 
-    public Optional<Object> listarPorId(Long id){
-        Optional<TaskModel> task = taskRepository.findById(id);
-        if (task.isEmpty()){
-            throw new ResourceNotFoundException("Task nao encontrada");
-        }
-        return Optional.of(mapper.toResponse(task.get()));
-
+    public TaskResponseDTO listarPorId(Long id){
+        TaskModel task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada"));
+        return mapper.toResponse(task);
     }
 
-    public TaskResponseDTO criar(@RequestBody TaskRequestDTO novaTask){
+    public TaskResponseDTO criar(TaskRequestDTO novaTask){
         TaskModel task = mapper.toEntity(novaTask);
         taskRepository.save(task);
         return mapper.toResponse(task);
