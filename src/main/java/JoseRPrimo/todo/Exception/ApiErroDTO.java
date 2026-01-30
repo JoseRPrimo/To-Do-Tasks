@@ -1,5 +1,6 @@
 package JoseRPrimo.todo.Exception;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDateTime;

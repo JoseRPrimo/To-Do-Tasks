@@ -31,8 +31,7 @@ public class TaskController {
     @GetMapping("/listar")
     @Operation(summary = "Listar todas as tasks", description = "Essa rota retornará uma lista de todas as tasks adicionadas.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Lista nao encontrada.")
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso.")
     })
     public List<TaskResponseDTO> listarTask(){
         return taskService.listar();
@@ -44,7 +43,7 @@ public class TaskController {
             @ApiResponse(responseCode = "200", description = "Task encontrada com sucesso."),
             @ApiResponse(responseCode = "404", description = "Task nao encontrada.")
     })
-    public TaskResponseDTO listarPorId(@Parameter(description = "Usuario manda o id no caminho da requisicao.")@PathVariable Long id) {
+    public TaskResponseDTO listarPorId(@Parameter(description = "Usuário manda o id no caminho da requisicao.")@PathVariable Long id) {
         return taskService.listarPorId(id);
     }
 
@@ -55,7 +54,7 @@ public class TaskController {
     })
     @PostMapping("/criar")
     public ResponseEntity<TaskResponseDTO> criarTask(@io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Usuario manda os dados da task a ser atualizada no corpo da requisicao",
+            description = "Usuário manda os dados da task a ser atualizada no corpo da requisicao",
             required = true) @Valid @RequestBody TaskRequestDTO task) {
         TaskResponseDTO taskNova = taskService.criar(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(taskNova);
@@ -67,9 +66,9 @@ public class TaskController {
             @ApiResponse(responseCode = "200", description = "Task alterada com sucesso."),
             @ApiResponse(responseCode = "404", description = "Task nao encontrada.")
     })
-    public TaskResponseDTO atualizarTask(@Parameter(description = "Usuario manda o id no caminho da requisicao.") @PathVariable Long id,
+    public TaskResponseDTO atualizarTask(@Parameter(description = "Usuário manda o id no caminho da requisição.") @PathVariable Long id,
                                          @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                                 description = "Usuario manda os dados da task a ser atualizada no corpo da requisicao",
+                                                 description = "Usuário manda os dados da task a ser atualizada no corpo da requisicao",
                                                  required = true
                                          ) @RequestBody TaskRequestDTO task) {
         return taskService.atualizar(id, task);
@@ -81,8 +80,27 @@ public class TaskController {
             @ApiResponse(responseCode = "204", description = "Task deletada com sucesso."),
             @ApiResponse(responseCode = "404", description = "Task nao encontrada.")
     })
-    public ResponseEntity<Void> deletarTask(@Parameter(description = "Usuario manda o id no caminho da requisicao.") @PathVariable Long id) {
+    public ResponseEntity<Void> deletarTask(@Parameter(description = "Usuário manda o id no caminho da requisição.") @PathVariable Long id) {
         taskService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/concluir")
+    @Operation(summary = "Concluir Task", description = "Task irá assumir o status de concluída.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task concluída."),
+            @ApiResponse(responseCode = "404", description = "Task nao encontrada.")
+    })
+    public ResponseEntity<TaskResponseDTO> concluir(@Parameter(description = "Usuário manda o id no caminho da requisição.")@PathVariable Long id){
+        return ResponseEntity.ok(taskService.concluir(id));
+    }
+
+    @Operation(summary = "Ordenar por status", description = "Ordena a lista de tasks por status (Nao concluida > concluida).")
+    @ApiResponses(value={
+            @ApiResponse(responseCode = "200", description = "Lista ordenada com sucesso")
+    })
+    @GetMapping("/ordenar-status")
+    public ResponseEntity<List<TaskResponseDTO>> ordenarPorStatus(){
+        return ResponseEntity.ok(taskService.ordenarPorStatus());
     }
 }

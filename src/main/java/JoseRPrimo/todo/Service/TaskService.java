@@ -6,14 +6,11 @@ import JoseRPrimo.todo.DTO.TaskResponseDTO;
 import JoseRPrimo.todo.Exception.ResourceNotFoundException;
 import JoseRPrimo.todo.Model.TaskModel;
 import JoseRPrimo.todo.Repository.TaskRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,5 +52,17 @@ public class TaskService {
         return mapper.toResponse(task);
     }
 
+        public TaskResponseDTO concluir(Long id){
+            TaskModel task = taskRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Task nao encontrada"));
+            task.setConcluida(true);
+            taskRepository.save(task);
+            return mapper.toResponse(task);
+        }
+
+        public List<TaskResponseDTO> ordenarPorStatus() {
+            Sort sort = Sort.by(Sort.Direction.ASC, "concluida");
+            return taskRepository.findAll(sort).stream().map(mapper::toResponse).toList();
+        }
 
 }
