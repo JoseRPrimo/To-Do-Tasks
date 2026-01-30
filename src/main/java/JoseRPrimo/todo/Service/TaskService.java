@@ -6,7 +6,7 @@ import JoseRPrimo.todo.DTO.TaskResponseDTO;
 import JoseRPrimo.todo.Exception.ResourceNotFoundException;
 import JoseRPrimo.todo.Model.TaskModel;
 import JoseRPrimo.todo.Repository.TaskRepository;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -60,9 +60,30 @@ public class TaskService {
             return mapper.toResponse(task);
         }
 
-        public List<TaskResponseDTO> ordenarPorStatus() {
-            Sort sort = Sort.by(Sort.Direction.ASC, "concluida");
+        public List<TaskResponseDTO> ordenarPorStatus(String status) {
+            Sort.Direction direction;
+            if ("concluida".equalsIgnoreCase(status)){
+                direction=Sort.Direction.DESC;
+            }
+            else {
+                direction=Sort.Direction.ASC;
+            }
+
+            Sort sort = Sort.by(direction, "concluida");
             return taskRepository.findAll(sort).stream().map(mapper::toResponse).toList();
+        }
+
+        public Page<TaskResponseDTO> listarPaginado(int page, int size, String status){
+            Sort.Direction direction;
+            if("concluida".equalsIgnoreCase(status)){
+                direction = Sort.Direction.DESC;
+            }
+            else {
+                direction = Sort.Direction.ASC;
+            }
+            Pageable pageable = PageRequest.of(page, size, Sort.by(direction,"concluida"));
+            Page<TaskModel> pagina = taskRepository.findAll(pageable);
+            return pagina.map(mapper::toResponse);
         }
 
 }

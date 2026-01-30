@@ -11,6 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -100,7 +103,15 @@ public class TaskController {
             @ApiResponse(responseCode = "200", description = "Lista ordenada com sucesso")
     })
     @GetMapping("/ordenar-status")
-    public ResponseEntity<List<TaskResponseDTO>> ordenarPorStatus(){
-        return ResponseEntity.ok(taskService.ordenarPorStatus());
+    public ResponseEntity<List<TaskResponseDTO>> ordenarPorStatus(@RequestParam(defaultValue = "nao_concluida") @PathVariable String status){
+        return ResponseEntity.ok(taskService.ordenarPorStatus(status));
+    }
+
+    @GetMapping("/paginada")
+    public ResponseEntity<Page<TaskResponseDTO>> paginado(@RequestParam(defaultValue = "0") @PathVariable  int page,
+                                                          @RequestParam(defaultValue = "5") @PathVariable int size,
+                                                          @RequestParam(defaultValue = "nao_concluida") @PathVariable String status){
+
+        return ResponseEntity.ok(taskService.listarPaginado(page, size, status));
     }
 }
